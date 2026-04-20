@@ -63,6 +63,36 @@ body {
   white-space: nowrap;
 }
 
+/* ----- Source filter buttons ----- */
+.source-filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px;
+  border-radius: 20px;
+  border: 1.5px solid var(--src-color, #555);
+  color: var(--src-color, #555);
+  background: #fff;
+  font-size: .82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s, color .15s;
+}
+.source-filter-btn .badge {
+  background: color-mix(in srgb, var(--src-color, #555) 15%, transparent);
+  color: var(--src-color, #555);
+  font-weight: 700;
+}
+.source-filter-btn:hover,
+.source-filter-btn.active {
+  background: var(--src-color, #555);
+  color: #fff;
+}
+.source-filter-btn.active .badge {
+  background: rgba(255,255,255,.25);
+  color: #fff;
+}
+
 /* ----- Category pills (filter bar) ----- */
 .category-pill {
   display: inline-flex;

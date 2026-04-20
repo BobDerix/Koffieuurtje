@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Actueel bibliotheeknieuws uit Nederland — automatisch bijgewerkt.">
+  <title>Bibliotheeknieuws</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top" id="main-navbar">
+  <div class="container-xl">
+    <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+      <i class="bi bi-book-half fs-4"></i>
+      <span class="fw-bold">Bibliotheeknieuws</span>
+    </a>
+    <span class="navbar-text text-white-50 small ms-2 d-none d-lg-block">
+      Actueel nieuws voor de Nederlandse bibliotheeksector
+    </span>
+    <div class="ms-auto d-flex align-items-center gap-2">
+      <span class="badge bg-white text-primary small d-none d-md-flex align-items-center gap-1" id="update-badge" style="display:none!important">
+        <i class="bi bi-clock"></i>
+        <span id="update-time"></span>
+      </span>
+      <button class="btn btn-sm btn-outline-light" id="refresh-btn" title="Nu bijwerken">
+        <i class="bi bi-arrow-clockwise" id="refresh-icon"></i>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main class="container-xl py-4">
+
+  <!-- Search bar -->
+  <div class="row mb-4">
+    <div class="col-lg-8">
+      <div class="input-group">
+        <span class="input-group-text bg-white border-end-0">
+          <i class="bi bi-search text-muted"></i>
+        </span>
+        <input type="search" id="search-input" class="form-control border-start-0 ps-0"
+               placeholder="Zoek in bibliotheeknieuws…" autocomplete="off">
+        <button class="btn btn-primary" id="search-btn">Zoeken</button>
+      </div>
+    </div>
+    <div class="col-lg-4 d-flex align-items-center justify-content-lg-end mt-2 mt-lg-0">
+      <span id="results-count" class="text-muted small"></span>
+    </div>
+  </div>
+
+  <!-- Category filter -->
+  <div class="mb-4">
+    <div class="d-flex flex-wrap gap-2 align-items-center" id="category-bar">
+      <button class="category-pill active" data-category="Alle">
+        <i class="bi bi-grid-3x3-gap-fill"></i> Alle
+        <span class="count" id="count-alle">0</span>
+      </button>
+      <!-- Category pills inserted by JS -->
+    </div>
+  </div>
+
+  <!-- Source filter -->
+  <div class="d-flex flex-wrap gap-2 mb-4" id="source-bar">
+    <!-- Source buttons inserted by JS -->
+  </div>
+
+  <!-- Loading state -->
+  <div id="loading-state" class="py-5 text-center">
+    <div class="spinner-border text-primary mb-3" role="status"></div>
+    <p class="text-muted">Nieuws ophalen…</p>
+  </div>
+
+  <!-- Error state -->
+  <div id="error-state" class="d-none">
+    <div class="alert alert-warning d-flex align-items-start gap-3">
+      <i class="bi bi-exclamation-triangle-fill fs-4 mt-1"></i>
+      <div>
+        <strong>Kon niet alle bronnen laden</strong>
+        <div id="error-detail" class="small mt-1"></div>
+        <button class="btn btn-sm btn-warning mt-2" id="retry-btn">
+          <i class="bi bi-arrow-clockwise me-1"></i>Opnieuw proberen
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Article grid -->
+  <div class="row g-4 d-none" id="articles-grid"></div>
+
+  <!-- Empty state -->
+  <div class="text-center py-5 d-none" id="empty-state">
+    <div class="empty-state-icon mb-3"><i class="bi bi-inbox"></i></div>
+    <h3 class="h5 text-muted">Geen artikelen gevonden</h3>
+    <p class="text-muted">Probeer andere zoektermen of wis het filter.</p>
+    <button class="btn btn-outline-primary btn-sm" id="clear-filter-btn">
+      Filters wissen
+    </button>
+  </div>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="mt-5 py-4 border-top bg-light">
+  <div class="container-xl">
+    <div class="row g-3 align-items-center">
+      <div class="col-md-8">
+        <div class="d-flex flex-wrap gap-3 align-items-center" id="footer-sources"></div>
+      </div>
+      <div class="col-md-4 text-md-end text-muted small">
+        Automatisch bijgewerkt elke 60 minuten
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Toast container -->
+<div id="toast-container" class="position-fixed bottom-0 end-0 p-3" style="z-index:9999"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="static/app.js"></script>
+</body>
+</html>
