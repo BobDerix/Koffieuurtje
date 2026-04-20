@@ -1,0 +1,246 @@
+/* =====================================================================
+   Bibliotheeknieuws — main stylesheet
+   ===================================================================== */
+
+:root {
+  --primary:      #1a3a5c;
+  --primary-dark: #0f2540;
+  --accent:       #f57c00;
+  --bg:           #f4f6f9;
+  --card-bg:      #ffffff;
+  --card-shadow:  0 2px 8px rgba(0,0,0,.08);
+  --card-shadow-h:0 6px 20px rgba(0,0,0,.14);
+  --radius:       12px;
+  --radius-sm:    6px;
+  --text-muted:   #6b7280;
+}
+
+/* ----- Base ----- */
+body {
+  background: var(--bg);
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  color: #1a1a2e;
+}
+
+/* ----- Navbar ----- */
+#main-navbar {
+  background: var(--primary) !important;
+  box-shadow: 0 2px 12px rgba(0,0,0,.2);
+}
+#main-navbar .navbar-brand {
+  font-size: 1.15rem;
+  letter-spacing: -.01em;
+}
+
+/* ----- Source badges ----- */
+.source-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 2px solid var(--src-color, #555);
+  color: var(--src-color, #555);
+  font-weight: 600;
+  font-size: .8rem;
+  transition: background .15s, color .15s;
+}
+.source-badge:hover {
+  background: var(--src-color, #555);
+  color: #fff;
+}
+
+.source-badge-sm {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--src-color, #555) 12%, transparent);
+  color: var(--src-color, #555);
+  font-weight: 600;
+  font-size: .72rem;
+  white-space: nowrap;
+}
+
+/* ----- Category pills (filter bar) ----- */
+.category-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1.5px solid #d1d5db;
+  color: #374151;
+  text-decoration: none;
+  font-size: .85rem;
+  font-weight: 500;
+  background: #fff;
+  transition: border-color .15s, background .15s, color .15s, transform .1s;
+}
+.category-pill:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  transform: translateY(-1px);
+}
+.category-pill.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(26,58,92,.3);
+}
+.category-pill .count {
+  background: rgba(0,0,0,.1);
+  border-radius: 10px;
+  padding: 0 6px;
+  font-size: .75rem;
+}
+.category-pill.active .count {
+  background: rgba(255,255,255,.25);
+}
+
+/* ----- Category tags on cards ----- */
+.category-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: .7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+}
+
+/* Category colours */
+.cat-digitaal                { background:#dbeafe; color:#1d4ed8; }
+.cat-beleid                  { background:#ede9fe; color:#6d28d9; }
+.cat-lezen--educatie,
+.cat-lezen-educatie          { background:#d1fae5; color:#065f46; }
+.cat-statistieken            { background:#ccfbf1; color:#0f766e; }
+.cat-innovatie               { background:#fef9c3; color:#854d0e; }
+.cat-collectie               { background:#ffedd5; color:#9a3412; }
+.cat-organisatie             { background:#f3f4f6; color:#374151; }
+.cat-evenementen             { background:#fce7f3; color:#9d174d; }
+.cat-overig                  { background:#f1f5f9; color:#475569; }
+
+/* ----- News cards ----- */
+.news-card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--card-shadow);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: box-shadow .2s, transform .2s;
+  position: relative;
+}
+.news-card:hover {
+  box-shadow: var(--card-shadow-h);
+  transform: translateY(-3px);
+}
+
+.news-card-img {
+  height: 180px;
+  overflow: hidden;
+  background: #e5e7eb;
+}
+.news-card-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform .3s;
+}
+.news-card:hover .news-card-img img {
+  transform: scale(1.04);
+}
+
+.news-card-body {
+  padding: 1rem 1.1rem .75rem;
+  flex: 1;
+}
+
+.news-title {
+  font-size: 1rem;
+  font-weight: 650;
+  line-height: 1.35;
+  margin-bottom: .4rem;
+  /* 3-line clamp */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.news-title a:hover {
+  color: var(--primary) !important;
+}
+
+.news-summary {
+  font-size: .85rem;
+  line-height: 1.5;
+  /* 3-line clamp */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 0;
+}
+
+.news-card-footer {
+  padding: .75rem 1.1rem;
+  border-top: 1px solid #f1f5f9;
+}
+.btn-read-more {
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--primary);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: gap .15s;
+}
+.btn-read-more:hover {
+  gap: 8px;
+  color: var(--accent);
+}
+
+/* ----- Empty state ----- */
+.empty-state-icon {
+  font-size: 4rem;
+  color: #d1d5db;
+}
+
+/* ----- Pagination ----- */
+.pagination .page-link {
+  border-radius: var(--radius-sm) !important;
+  color: var(--primary);
+  border: 1.5px solid #e5e7eb;
+}
+.pagination .page-item.active .page-link {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+.pagination .page-link:hover {
+  background: #e8f0fe;
+  border-color: var(--primary);
+}
+
+/* ----- Search input ----- */
+.input-group .form-control:focus {
+  box-shadow: none;
+  border-color: var(--primary);
+}
+.input-group .input-group-text {
+  border-color: #dee2e6;
+}
+
+/* ----- Refresh spinner ----- */
+.spin {
+  animation: spin .6s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ----- Scrollbar (WebKit) ----- */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #c4c9d4; border-radius: 3px; }

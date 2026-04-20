@@ -1,0 +1,271 @@
+{% extends "base.html" %}
+
+{% block title %}
+  {% if search %}Zoeken: {{ search }} — {% endif %}
+  {% if selected_category != 'Alle' %}{{ selected_category }} — {% endif %}
+  Bibliotheeknieuws
+{% endblock %}
+
+{% block content %}
+
+<!-- ===== SEARCH BAR ===== -->
+<div class="row mb-4">
+  <div class="col-lg-8">
+    <form method="get" action="/" class="d-flex gap-2">
+      {% if selected_category != 'Alle' %}
+        <input type="hidden" name="category" value="{{ selected_category }}">
+      {% endif %}
+      {% if selected_source %}
+        <input type="hidden" name="source" value="{{ selected_source }}">
+      {% endif %}
+      <div class="input-group">
+        <span class="input-group-text bg-white border-end-0">
+          <i class="bi bi-search text-muted"></i>
+        </span>
+        <input type="search" name="q" class="form-control border-start-0 ps-0"
+               placeholder="Zoek in bibliotheeknieuws…"
+               value="{{ search }}"
+               autocomplete="off">
+        {% if search %}
+        <a href="{{ url_for('index', category=selected_category if selected_category != 'Alle' else none, source=selected_source or none) }}"
+           class="btn btn-outline-secondary" title="Zoekopdracht wissen">
+          <i class="bi bi-x"></i>
+        </a>
+        {% endif %}
+        <button class="btn btn-primary" type="submit">Zoeken</button>
+      </div>
+    </form>
+  </div>
+  <div class="col-lg-4 d-flex align-items-center justify-content-lg-end mt-2 mt-lg-0">
+    {% if total > 0 %}
+    <span class="text-muted small">
+      <strong>{{ total }}</strong> artikel{{ 's' if total != 1 else '' }}
+      {% if search %} voor "<em>{{ search }}</em>"{% endif %}
+    </span>
+    {% endif %}
+  </div>
+</div>
+
+<!-- ===== CATEGORY TABS ===== -->
+<div class="mb-4">
+  <div class="d-flex flex-wrap gap-2 align-items-center">
+    <!-- Alle -->
+    <a href="{{ url_for('index', source=selected_source or none, q=search or none) }}"
+       class="category-pill {% if selected_category == 'Alle' %}active{% endif %}">
+      <i class="bi bi-grid-3x3-gap-fill"></i>
+      Alle
+      <span class="count">{{ all_count }}</span>
+    </a>
+
+    {% for cat in all_categories %}
+    {% set cnt = category_counts.get(cat, 0) %}
+    {% if cnt > 0 %}
+    <a href="{{ url_for('index', category=cat, source=selected_source or none, q=search or none) }}"
+       class="category-pill cat-{{ cat | lower | replace(' ', '-') | replace('&', '') | replace('  ', '-') }}
+              {% if selected_category == cat %}active{% endif %}">
+      {{ cat_icon(cat) }}
+      {{ cat }}
+      <span class="count">{{ cnt }}</span>
+    </a>
+    {% endif %}
+    {% endfor %}
+
+    <!-- Source filter -->
+    {% if selected_source %}
+    <a href="{{ url_for('index', category=selected_category if selected_category != 'Alle' else none, q=search or none) }}"
+       class="ms-auto btn btn-sm btn-outline-secondary d-flex align-items-center gap-1">
+      <i class="bi bi-x-circle"></i>
+      Bron filter wissen
+    </a>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Source filter badges (when active) -->
+{% if selected_source and selected_source in source_map %}
+{% set active_src = source_map[selected_source] %}
+<div class="alert alert-light border d-flex align-items-center gap-2 mb-3 py-2">
+  <i class="bi {{ active_src.icon }}" style="color: {{ active_src.color }}"></i>
+  <span>Gefilterd op bron: <strong>{{ active_src.name }}</strong></span>
+  <a href="{{ url_for('index', category=selected_category if selected_category != 'Alle' else none, q=search or none) }}"
+     class="ms-auto text-muted text-decoration-none"><i class="bi bi-x"></i></a>
+</div>
+{% endif %}
+
+<!-- ===== ARTICLE GRID ===== -->
+{% if articles %}
+<div class="row g-4" id="articles-grid">
+  {% for article in articles %}
+  {% set src = source_map.get(article.source_id, {}) %}
+  <div class="col-md-6 col-xl-4">
+    <article class="news-card h-100">
+      {% if article.image_url %}
+      <div class="news-card-img">
+        <img src="{{ article.image_url }}" alt="" loading="lazy"
+             onerror="this.closest('.news-card-img').remove()">
+      </div>
+      {% endif %}
+
+      <div class="news-card-body">
+        <!-- Meta row -->
+        <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
+          <span class="source-badge-sm" style="--src-color: {{ src.get('color', '#666') }}">
+            <i class="bi {{ src.get('icon', 'bi-circle') }}"></i>
+            {{ article.source_name }}
+          </span>
+          <span class="category-tag cat-{{ article.category | lower | replace(' ', '-') | replace('&', '') | replace('  ', '-') }}">
+            {{ article.category }}
+          </span>
+          {% if article.published_at %}
+          <span class="ms-auto text-muted small">
+            {{ article.published_at | datetimeformat }}
+          </span>
+          {% endif %}
+        </div>
+
+        <!-- Title -->
+        <h2 class="news-title">
+          <a href="{{ article.url }}" target="_blank" rel="noopener noreferrer"
+             class="stretched-link text-decoration-none text-dark">
+            {{ article.title }}
+          </a>
+        </h2>
+
+        <!-- Summary -->
+        {% if article.summary %}
+        <p class="news-summary text-muted">
+          {{ article.summary[:200] }}{% if article.summary | length > 200 %}…{% endif %}
+        </p>
+        {% endif %}
+      </div>
+
+      <div class="news-card-footer">
+        <a href="{{ article.url }}" target="_blank" rel="noopener noreferrer"
+           class="btn-read-more">
+          Lees verder <i class="bi bi-arrow-right"></i>
+        </a>
+      </div>
+    </article>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- ===== PAGINATION ===== -->
+{% if total_pages > 1 %}
+<nav class="mt-5" aria-label="Paginering">
+  <ul class="pagination justify-content-center flex-wrap gap-1">
+
+    {% if page > 1 %}
+    <li class="page-item">
+      <a class="page-link" href="{{ url_for('index', category=selected_category if selected_category != 'Alle' else none,
+                                            source=selected_source or none, q=search or none, page=page-1) }}">
+        <i class="bi bi-chevron-left"></i>
+      </a>
+    </li>
+    {% endif %}
+
+    {% set start_page = [1, page - 2] | max %}
+    {% set end_page   = [total_pages, page + 2] | min %}
+
+    {% if start_page > 1 %}
+    <li class="page-item">
+      <a class="page-link" href="{{ url_for('index', category=selected_category if selected_category != 'Alle' else none,
+                                            source=selected_source or none, q=search or none, page=1) }}">1</a>
+    </li>
+    {% if start_page > 2 %}
+    <li class="page-item disabled"><span class="page-link">…</span></li>
+    {% endif %}
+    {% endif %}
+
+    {% for p in range(start_page, end_page + 1) %}
+    <li class="page-item {% if p == page %}active{% endif %}">
+      <a class="page-link" href="{{ url_for('index', category=selected_category if selected_category != 'Alle' else none,
+                                            source=selected_source or none, q=search or none, page=p) }}">{{ p }}</a>
+    </li>
+    {% endfor %}
+
+    {% if end_page < total_pages %}
+    {% if end_page < total_pages - 1 %}
+    <li class="page-item disabled"><span class="page-link">…</span></li>
+    {% endif %}
+    <li class="page-item">
+      <a class="page-link" href="{{ url_for('index', category=selected_category if selected_category != 'Alle' else none,
+                                            source=selected_source or none, q=search or none, page=total_pages) }}">{{ total_pages }}</a>
+    </li>
+    {% endif %}
+
+    {% if page < total_pages %}
+    <li class="page-item">
+      <a class="page-link" href="{{ url_for('index', category=selected_category if selected_category != 'Alle' else none,
+                                            source=selected_source or none, q=search or none, page=page+1) }}">
+        <i class="bi bi-chevron-right"></i>
+      </a>
+    </li>
+    {% endif %}
+  </ul>
+</nav>
+{% endif %}
+
+{% else %}
+<!-- Empty state -->
+<div class="text-center py-5 my-5">
+  <div class="empty-state-icon mb-4">
+    <i class="bi bi-inbox"></i>
+  </div>
+  {% if search %}
+  <h3 class="h5 text-muted">Geen resultaten voor "{{ search }}"</h3>
+  <p class="text-muted">Probeer andere zoektermen of wis het filter.</p>
+  <a href="{{ url_for('index') }}" class="btn btn-primary">Alle nieuws</a>
+  {% else %}
+  <h3 class="h5 text-muted">Nog geen nieuws geladen</h3>
+  <p class="text-muted">Klik op de verversknop om nieuws op te halen.</p>
+  <button class="btn btn-primary" onclick="triggerRefresh()">
+    <i class="bi bi-arrow-clockwise me-2"></i>Nu bijwerken
+  </button>
+  {% endif %}
+</div>
+{% endif %}
+
+<!-- Source status info (collapsible) -->
+<div class="mt-5">
+  <button class="btn btn-link btn-sm text-muted p-0" type="button"
+          data-bs-toggle="collapse" data-bs-target="#source-status">
+    <i class="bi bi-info-circle me-1"></i>Bronstatus
+  </button>
+  <div class="collapse mt-2" id="source-status">
+    <div class="card card-body border-0 bg-light">
+      <div class="row g-3">
+        {% for src in sources %}
+        {% set status = source_statuses.get(src.id, {}) %}
+        <div class="col-md-4">
+          <div class="d-flex align-items-start gap-2">
+            <span class="mt-1" style="color: {{ src.color }}">
+              <i class="bi {{ src.icon }} fs-5"></i>
+            </span>
+            <div>
+              <div class="fw-semibold small">{{ src.name }}</div>
+              {% if status.get('last_error') %}
+              <div class="text-danger small">
+                <i class="bi bi-exclamation-circle"></i> {{ status.last_error[:80] }}
+              </div>
+              {% else %}
+              <div class="text-success small">
+                <i class="bi bi-check-circle"></i> Actief
+                {% if status.get('article_count') %}({{ status.article_count }} artikelen){% endif %}
+              </div>
+              {% endif %}
+              {% if status.get('last_updated') %}
+              <div class="text-muted small">
+                Bijgewerkt: {{ status.last_updated[:16].replace('T', ' ') }}
+              </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
