@@ -147,3 +147,124 @@ def get_last_update():
     row = conn.execute('SELECT MAX(fetched_at) AS t FROM articles').fetchone()
     conn.close()
     return row['t'] if row else None
+
+
+# ---------------------------------------------------------------------------
+# Peilingen (anonieme stemmingen voor Koffieuurtje-sessies)
+# ---------------------------------------------------------------------------
+
+def init_peiling_tables():
+    conn = get_db()
+    conn.executescript('''
+        CREATE TABLE IF NOT EXISTS peilingen (
+            id          INTEGER PRIMARY KEY AUTOINCREMENT,
+            vraag       TEXT NOT NULL,
+            created_at  DATETIME DEFAULT CURRENT_TIMESTAMP,
+            is_actief   INTEGER DEFAULT 1
+        );
+
+        CREATE TABLE IF NOT EXISTS peiling_opties (
+            id          INTEGER PRIMARY KEY AUTOINCREMENT,
+            peiling_id  INTEGER NOT NULL REFERENCES peilingen(id),
+            optie_tekst TEXT NOT NULL,
+            volgorde    INTEGER DEFAULT 0
+        );
+
+        -- Geen persoonsgegevens: geen IP, geen sessie-ID, geen gebruiker.
+        -- Antwoorden zijn nooit te herleiden tot een persoon.
+        CREATE TABLE IF NOT EXISTS peiling_antwoorden (
+            id          INTEGER PRIMARY KEY AUTOINCREMENT,
+            peiling_id  INTEGER NOT NULL REFERENCES peilingen(id),
+            optie_id    INTEGER NOT NULL REFERENCES peiling_opties(id),
+            ingediend_op DATETIME DEFAULT CURRENT_TIMESTAMP
+        );
+    ''')
+    conn.commit()
+    conn.close()
+
+
+def maak_peiling(vraag: str, opties: list[str]) -> int:
+    conn = get_db()
+    cur = conn.execute('INSERT INTO peilingen (vraag) VALUES (?)', (vraag,))
+    peiling_id = cur.lastrowid
+    for i, tekst in enumerate(opties):
+        conn.execute(
+            'INSERT INTO peiling_opties (peiling_id, optie_tekst, volgorde) VALUES (?, ?, ?)',
+            (peiling_id, tekst, i),
+        )
+    conn.commit()
+    conn.close()
+    return peiling_id
+
+
+def get_peiling(peiling_id: int) -> dict | None:
+    conn = get_db()
+    row = conn.execute('SELECT * FROM peilingen WHERE id = ?', (peiling_id,)).fetchone()
+    if not row:
+        conn.close()
+        return None
+    opties = conn.execute(
+        'SELECT * FROM peiling_opties WHERE peiling_id = ? ORDER BY volgorde',
+        (peiling_id,),
+    ).fetchall()
+    conn.close()
+    return {'peiling': dict(row), 'opties': [dict(o) for o in opties]}
+
+
+def sla_antwoord_op(peiling_id: int, optie_id: int) -> bool:
+    """Sla een anoniem antwoord op. Geen persoonsgegevens worden geregistreerd."""
+    conn = get_db()
+    # Controleer dat optie bij deze peiling hoort
+    row = conn.execute(
+        'SELECT id FROM peiling_opties WHERE id = ? AND peiling_id = ?',
+        (optie_id, peiling_id),
+    ).fetchone()
+    if not row:
+        conn.close()
+        return False
+    conn.execute(
+        'INSERT INTO peiling_antwoorden (peiling_id, optie_id) VALUES (?, ?)',
+        (peiling_id, optie_id),
+    )
+    conn.commit()
+    conn.close()
+    return True
+
+
+def get_uitslag(peiling_id: int) -> dict | None:
+    conn = get_db()
+    peiling = conn.execute('SELECT * FROM peilingen WHERE id = ?', (peiling_id,)).fetchone()
+    if not peiling:
+        conn.close()
+        return None
+    opties = conn.execute(
+        'SELECT * FROM peiling_opties WHERE peiling_id = ? ORDER BY volgorde',
+        (peiling_id,),
+    ).fetchall()
+    totaal = conn.execute(
+        'SELECT COUNT(*) FROM peiling_antwoorden WHERE peiling_id = ?',
+        (peiling_id,),
+    ).fetchone()[0]
+    resultaten = []
+    for optie in opties:
+        aantal = conn.execute(
+            'SELECT COUNT(*) FROM peiling_antwoorden WHERE optie_id = ?',
+            (optie['id'],),
+        ).fetchone()[0]
+        resultaten.append({
+            'optie_id': optie['id'],
+            'optie_tekst': optie['optie_tekst'],
+            'aantal': aantal,
+            'percentage': round(aantal / totaal * 100) if totaal else 0,
+        })
+    conn.close()
+    return {'peiling': dict(peiling), 'resultaten': resultaten, 'totaal': totaal}
+
+
+def get_actieve_peilingen() -> list[dict]:
+    conn = get_db()
+    rows = conn.execute(
+        'SELECT * FROM peilingen WHERE is_actief = 1 ORDER BY created_at DESC'
+    ).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]

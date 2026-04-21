@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Uitslag — {{ peiling.vraag[:60] }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-7">
+
+    <div class="mb-4">
+      <a href="/peilingen" class="text-muted text-decoration-none small">
+        <i class="bi bi-arrow-left me-1"></i>Alle peilingen
+      </a>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+      <div class="card-body p-4 p-md-5">
+
+        <div class="d-flex align-items-center gap-2 mb-3 text-muted small">
+          <i class="bi bi-shield-check text-success"></i>
+          Uitsluitend aantallen — antwoorden zijn niet te herleiden tot personen.
+        </div>
+
+        <h1 class="h4 mb-1">{{ peiling.vraag }}</h1>
+        <p class="text-muted small mb-4">
+          {{ totaal }} stem{{ 'men' if totaal != 1 else '' }} uitgebracht
+        </p>
+
+        <div class="d-grid gap-3">
+          {% for r in resultaten %}
+          <div>
+            <div class="d-flex justify-content-between align-items-baseline mb-1">
+              <span class="fw-medium">{{ r.optie_tekst }}</span>
+              <span class="text-muted small ms-2 flex-shrink-0">
+                {{ r.aantal }} ({{ r.percentage }}%)
+              </span>
+            </div>
+            <div class="progress" style="height: 10px;" role="progressbar"
+                 aria-valuenow="{{ r.percentage }}" aria-valuemin="0" aria-valuemax="100">
+              <div class="progress-bar" style="width: {{ r.percentage }}%"></div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+        {% if totaal == 0 %}
+        <p class="text-muted text-center mt-4">Nog geen stemmen uitgebracht.</p>
+        {% endif %}
+
+        <hr class="my-4">
+        <p class="text-muted small mb-0 text-center">
+          <i class="bi bi-info-circle me-1"></i>
+          Alleen aantallen per antwoordoptie worden weergegeven.
+          Individuele antwoorden worden niet bijgehouden.
+        </p>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

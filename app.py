@@ -2,16 +2,22 @@ import atexit
 import logging
 
 from apscheduler.schedulers.background import BackgroundScheduler
-from flask import Flask, jsonify, redirect, render_template, request, url_for
+from flask import Flask, abort, jsonify, redirect, render_template, request, url_for
 
 from config import CATEGORIES, SOURCES, UPDATE_INTERVAL_MINUTES
 from database import (
+    get_actieve_peilingen,
     get_articles,
     get_category_counts,
     get_last_update,
+    get_peiling,
     get_source_statuses,
     get_total_count,
+    get_uitslag,
     init_db,
+    init_peiling_tables,
+    maak_peiling,
+    sla_antwoord_op,
 )
 from scraper import fetch_all_sources
 
@@ -166,6 +172,54 @@ def api_status():
 
 
 # ---------------------------------------------------------------------------
+# Peilingen — anonieme stemmingen voor Koffieuurtje-sessies
+# ---------------------------------------------------------------------------
+
+@app.route('/peiling/<int:peiling_id>')
+def peiling(peiling_id):
+    data = get_peiling(peiling_id)
+    if not data:
+        abort(404)
+    return render_template('peiling.html', **data)
+
+
+@app.route('/peiling/<int:peiling_id>/stem', methods=['POST'])
+def stem(peiling_id):
+    optie_id = request.form.get('optie_id', type=int)
+    if not optie_id:
+        return redirect(url_for('peiling', peiling_id=peiling_id))
+    # Sla anoniem antwoord op — geen persoonsgegevens worden geregistreerd
+    sla_antwoord_op(peiling_id, optie_id)
+    return redirect(url_for('uitslag', peiling_id=peiling_id))
+
+
+@app.route('/peiling/<int:peiling_id>/uitslag')
+def uitslag(peiling_id):
+    data = get_uitslag(peiling_id)
+    if not data:
+        abort(404)
+    return render_template('uitslag.html', **data)
+
+
+@app.route('/api/peiling', methods=['POST'])
+def api_maak_peiling():
+    body = request.get_json(silent=True) or {}
+    vraag = (body.get('vraag') or '').strip()
+    opties = [o.strip() for o in body.get('opties', []) if str(o).strip()]
+    if not vraag or len(opties) < 2:
+        return jsonify({'status': 'error', 'message': 'Geef een vraag en minimaal 2 opties op.'}), 400
+    peiling_id = maak_peiling(vraag, opties)
+    return jsonify({'status': 'ok', 'peiling_id': peiling_id,
+                    'url': url_for('peiling', peiling_id=peiling_id, _external=True)}), 201
+
+
+@app.route('/peilingen')
+def peilingen_overzicht():
+    peilingen = get_actieve_peilingen()
+    return render_template('peilingen.html', peilingen=peilingen)
+
+
+# ---------------------------------------------------------------------------
 # Startup
 # ---------------------------------------------------------------------------
 
@@ -187,6 +241,7 @@ def start_scheduler():
 
 if __name__ == '__main__':
     init_db()
+    init_peiling_tables()
     logger.info("Eerste nieuwsophaling gestart…")
     fetch_all_sources()
     start_scheduler()

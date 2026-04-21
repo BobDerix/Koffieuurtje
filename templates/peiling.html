@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}Peiling — {{ peiling.vraag[:60] }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-7">
+
+    <div class="mb-4">
+      <a href="/peilingen" class="text-muted text-decoration-none small">
+        <i class="bi bi-arrow-left me-1"></i>Alle peilingen
+      </a>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+      <div class="card-body p-4 p-md-5">
+
+        <div class="d-flex align-items-center gap-2 mb-3 text-muted small">
+          <i class="bi bi-shield-check text-success"></i>
+          Uw antwoord wordt anoniem opgeslagen — nooit te herleiden tot u persoonlijk.
+        </div>
+
+        <h1 class="h4 mb-4">{{ peiling.vraag }}</h1>
+
+        <form method="post" action="/peiling/{{ peiling.id }}/stem" id="peiling-form">
+          <div class="d-grid gap-2 mb-4" id="opties-container">
+            {% for optie in opties %}
+            <label class="optie-label d-flex align-items-center gap-3 p-3 rounded border"
+                   for="optie-{{ optie.id }}">
+              <input class="form-check-input flex-shrink-0 mt-0" type="radio"
+                     name="optie_id" id="optie-{{ optie.id }}" value="{{ optie.id }}" required>
+              <span>{{ optie.optie_tekst }}</span>
+            </label>
+            {% endfor %}
+          </div>
+
+          <button type="submit" class="btn btn-primary w-100" id="stem-btn">
+            <i class="bi bi-check2-circle me-2"></i>Stem uitbrengen
+          </button>
+        </form>
+
+        <p class="text-muted small mt-3 mb-0 text-center">
+          <i class="bi bi-info-circle me-1"></i>
+          Er worden geen identificerende gegevens (zoals IP-adres of sessie-ID) opgeslagen.
+        </p>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<style>
+.optie-label {
+  cursor: pointer;
+  transition: background-color .15s, border-color .15s;
+}
+.optie-label:hover {
+  background-color: #f0f4ff;
+  border-color: var(--bs-primary) !important;
+}
+.optie-label:has(input:checked) {
+  background-color: #e8eeff;
+  border-color: var(--bs-primary) !important;
+  font-weight: 500;
+}
+</style>
+
+<script>
+(function () {
+  const storageKey = 'gestemd_peiling_{{ peiling.id }}';
+  if (localStorage.getItem(storageKey)) {
+    window.location.replace('/peiling/{{ peiling.id }}/uitslag');
+    return;
+  }
+  document.getElementById('peiling-form').addEventListener('submit', function () {
+    localStorage.setItem(storageKey, '1');
+  });
+}());
+</script>
+{% endblock %}

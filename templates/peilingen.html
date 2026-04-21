@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Koffieuurtje Peilingen{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+
+    <div class="d-flex align-items-center gap-3 mb-4">
+      <div>
+        <h1 class="h4 mb-0">Koffieuurtje Peilingen</h1>
+        <p class="text-muted small mb-0">
+          Anonieme stemmingen — antwoorden nooit te herleiden tot een persoon.
+        </p>
+      </div>
+    </div>
+
+    {% if peilingen %}
+    <div class="d-grid gap-3">
+      {% for p in peilingen %}
+      <a href="/peiling/{{ p.id }}" class="card border-0 shadow-sm text-decoration-none text-dark">
+        <div class="card-body d-flex align-items-center gap-3 p-3">
+          <i class="bi bi-bar-chart-line fs-4 text-primary flex-shrink-0"></i>
+          <div class="flex-grow-1">
+            <div class="fw-medium">{{ p.vraag }}</div>
+            <div class="text-muted small">
+              {{ p.created_at[:10] }}
+            </div>
+          </div>
+          <i class="bi bi-chevron-right text-muted flex-shrink-0"></i>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+
+    {% else %}
+    <div class="text-center py-5 text-muted">
+      <i class="bi bi-inbox fs-1 d-block mb-3"></i>
+      <p>Er zijn nog geen actieve peilingen.</p>
+    </div>
+    {% endif %}
+
+    <div class="mt-4 p-3 rounded bg-light small text-muted d-flex gap-2">
+      <i class="bi bi-shield-check text-success flex-shrink-0 mt-1"></i>
+      <span>
+        Cubiss zorgt ervoor dat antwoorden nooit te herleiden zijn tot de persoon.
+        Er worden geen IP-adressen, sessie-IDs of andere identificerende gegevens opgeslagen.
+        Alleen aantallen per antwoordoptie zijn zichtbaar.
+      </span>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
