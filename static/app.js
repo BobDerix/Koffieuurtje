@@ -10,6 +10,7 @@ const SOURCES = [
     name: 'Bnetwerk',
     color: '#1565c0',
     icon: 'bi-building',
+    baseUrl: 'https://www.bibliotheeknetwerk.nl',
     feedUrls: [
       'https://www.bibliotheeknetwerk.nl/rss.xml',
       'https://www.bibliotheeknetwerk.nl/feed',
@@ -21,6 +22,7 @@ const SOURCES = [
     name: 'Mark Dekkers',
     color: '#e65100',
     icon: 'bi-pencil-square',
+    baseUrl: 'https://www.markdeckers.net',
     feedUrls: [
       'https://www.markdeckers.net/feeds/posts/default?alt=rss',
       'https://www.markdeckers.net/feeds/posts/default',
@@ -31,22 +33,69 @@ const SOURCES = [
     name: 'Bibliotheekblad',
     color: '#2e7d32',
     icon: 'bi-newspaper',
+    baseUrl: 'https://bibliotheekblad.nl',
     feedUrls: [
       'https://bibliotheekblad.nl/feed/',
       'https://bibliotheekblad.nl/feed',
     ],
   },
+  {
+    id: 'vob',
+    name: 'VOB (Vereniging van Openbare Bibliotheken)',
+    color: '#6a1b9a',
+    icon: 'bi-people-fill',
+    baseUrl: 'https://www.vob.nl',
+    feedUrls: [
+      'https://www.vob.nl/feed/',
+      'https://www.vob.nl/rss',
+    ],
+  },
+  {
+    id: 'kb',
+    name: 'KB - Koninklijke Bibliotheek',
+    color: '#00695c',
+    icon: 'bi-bank',
+    baseUrl: 'https://www.kb.nl',
+    feedUrls: [
+      'https://www.kb.nl/rss.xml',
+      'https://www.kb.nl/nieuws/rss',
+      'https://www.kb.nl/feed',
+    ],
+  },
+  {
+    id: 'lezen',
+    name: 'Lezen.nl / Stichting Lezen',
+    color: '#1565c0',
+    icon: 'bi-book',
+    baseUrl: 'https://www.lezen.nl',
+    feedUrls: [
+      'https://www.lezen.nl/feed/',
+      'https://www.lezen.nl/rss',
+    ],
+  },
+  {
+    id: 'probiblio',
+    name: 'ProBiblio',
+    color: '#558b2f',
+    icon: 'bi-diagram-3',
+    baseUrl: 'https://www.probiblio.nl',
+    feedUrls: [
+      'https://www.probiblio.nl/feed/',
+      'https://www.probiblio.nl/rss',
+    ],
+  },
 ];
 
 const CATEGORIES = {
-  'Digitaal':         ['digitaal','e-book','ebook','digitale bibliotheek','app','online','streaming','e-reader','epub','luisterboek','platform','digitalisering','e-content'],
-  'Beleid':           ['beleid','wet','subsidie','financiering','budget','overheid','ministerie','gemeente','wethouder','bezuiniging','politiek','bibliotheekwet','stelsel','ocw'],
-  'Lezen & Educatie': ['lezen','onderwijs','jeugd','kinderen','school','laaggeletterdheid','educatie','voorlezen','leesbevordering','taalvaardigheid','taalcoach','leescafé','geletterdheid','alfabetisering'],
-  'Statistieken':     ['statistieken','cijfers','rapport','onderzoek','data','meting','uitleningen','gebruik','bezoekers','percentage','groei','jaarverslag','monitor','analyse'],
-  'Innovatie':        ['innovatie','technologie','ai','artificial intelligence','automatisering','robot','chatbot','machine learning','smart','makerspace','experiment','pilot'],
-  'Collectie':        ['collectie','aanwinsten','muziek','film','boeken','tijdschriften','stripboek','magazine','dvd','nbd','selectie','prentenboek','non-fictie'],
-  'Organisatie':      ['personeel','bestuur','directie','samenwerking','fusie','verbouwing','opening','sluiting','directeur','medewerker','vrijwilliger','reorganisatie','nieuwbouw','verhuizing'],
-  'Evenementen':      ['evenement','congres','conferentie','lezing','workshop','festival','tentoonstelling','bijeenkomst','symposium','dag van','manifestatie','themaweek'],
+  'Digitaal':         ['digitaal','e-book','ebook','digitale bibliotheek','app','online','streaming','e-reader','epub','luisterboek','platform','digitalisering','e-content','bibliotheek app','digitale dienst','nbc','cloudlibrary','bolinda','boekenbalie','libris','publiekebibliotheek','kb app'],
+  'Beleid':           ['beleid','wet','subsidie','financiering','budget','overheid','ministerie','gemeente','wethouder','bezuiniging','politiek','bibliotheekwet','stelsel','ocw','coalitieakkoord','motie','amendement','bibliotheekbeleid','cultuurnota','prestatieafspraak','wsob','scp-rapport','bibliotheekstelsel'],
+  'Lezen & Educatie': ['lezen','onderwijs','jeugd','kinderen','school','laaggeletterdheid','educatie','voorlezen','leesbevordering','taalvaardigheid','taalcoach','leescafé','geletterdheid','alfabetisering','nationale bibliotheekdag','kinderboekenweek','leesmonitor','leesoffensief','taalakkoord','digisterke','nrp','mbo','hbo','basisschool','voortgezet onderwijs','bibliotheek op school','de bibliotheek op school','dbos'],
+  'Statistieken':     ['statistieken','cijfers','rapport','onderzoek','data','meting','uitleningen','gebruik','bezoekers','percentage','groei','jaarverslag','monitor','analyse','fno','wsob-monitor','leengedrag','lidmaatschap','leden','leners','uitleencijfers','financieel jaarverslag'],
+  'Innovatie':        ['innovatie','technologie','ai','artificial intelligence','automatisering','robot','chatbot','machine learning','smart','makerspace','experiment','pilot','chatgpt','generatieve ai','llm','digital twin','open data','linked data','rfid','zelfbediening','makerslab'],
+  'Collectie':        ['collectie','aanwinsten','muziek','film','boeken','tijdschriften','stripboek','magazine','dvd','nbd','selectie','prentenboek','non-fictie','nbd biblion','bruna','thriller','roman','jeugdboek','graphic novel','e-audioboek','boekenbon','bestseller','nieuwe titels'],
+  'Organisatie':      ['personeel','bestuur','directie','samenwerking','fusie','verbouwing','opening','sluiting','directeur','medewerker','vrijwilliger','reorganisatie','nieuwbouw','verhuizing','bibliotheekdirecteur','raad van toezicht','nieuwe locatie','filiaal','dependance','balie','ov-chipkaart bibliotheek','bibliotheekauto'],
+  'Evenementen':      ['evenement','congres','conferentie','lezing','workshop','festival','tentoonstelling','bijeenkomst','symposium','dag van','manifestatie','themaweek','boekenbal','schrijversweekend','poëzieweek','bibliotheekcongres','bibliotheekmanifest','salon','debat','storytelling','voorstelling'],
+  'Personeel & HR':   ['vacature','sollicitatie','cao','arbeidsmarkt','bibliotheekmedewerker','opleidingen','certificering','bijscholing','bisc','bso'],
 };
 
 const CAT_ICONS = {
@@ -58,12 +107,14 @@ const CAT_ICONS = {
   'Collectie':        'bi-collection',
   'Organisatie':      'bi-people',
   'Evenementen':      'bi-calendar-event',
+  'Personeel & HR':   'bi-person-badge',
   'Overig':           'bi-tag',
 };
 
 const CACHE_KEY   = 'bibliotheeknieuws_cache';
 const CACHE_TTL   = 60 * 60 * 1000; // 1 hour
 const AUTO_REFRESH = 60 * 60 * 1000;
+const MAX_ARTICLES_PER_SOURCE = 30;
 
 // ============================================================
 // STATE
@@ -114,7 +165,7 @@ function getTextContent(node, selectors) {
   for (const sel of selectors) {
     const el = node.querySelector(sel);
     if (el) {
-      const text = el.getAttribute('href') || el.textContent;
+      const text = el.getAttribute('href') || el.getAttribute('url') || el.textContent;
       if (text?.trim()) return text.trim();
     }
   }
@@ -128,8 +179,8 @@ function stripHTML(html) {
 }
 
 function findImage(node) {
-  // media:thumbnail or media:content
-  const media = node.querySelector('thumbnail, content[url], enclosure[type^="image"]');
+  // media:thumbnail, media:content with url attribute, or enclosure with url attribute
+  const media = node.querySelector('thumbnail, content[url], enclosure[url], enclosure[type^="image"]');
   if (media) return media.getAttribute('url') || media.getAttribute('href');
   // <img> in description/content
   const raw = node.querySelector('description, content, summary')?.innerHTML || '';
@@ -152,8 +203,13 @@ function parseEntries(doc, source) {
 
   for (const node of nodes) {
     const title = getTextContent(node, ['title']);
-    const url   = getTextContent(node, ['link[rel="alternate"]', 'link:not([rel])', 'link', 'guid']);
+    let url     = getTextContent(node, ['link[rel="alternate"]', 'link:not([rel])', 'link', 'guid', 'id']);
     if (!title || !url || url.startsWith('?')) continue;
+
+    // Make relative URLs absolute using the source base URL
+    if (url.startsWith('/') && source.baseUrl) {
+      url = source.baseUrl + url;
+    }
 
     const rawDesc = getTextContent(node, ['description', 'summary', 'content\\:encoded', 'content']);
     const summary = stripHTML(rawDesc).slice(0, 280);
@@ -176,7 +232,7 @@ function parseEntries(doc, source) {
       image,
     });
   }
-  return articles;
+  return articles.slice(0, MAX_ARTICLES_PER_SOURCE);
 }
 
 async function fetchSource(source) {

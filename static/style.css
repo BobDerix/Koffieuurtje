@@ -1,48 +1,699 @@
 /* =====================================================================
-   Bibliotheeknieuws — main stylesheet
+   Bibliotheeknieuws — hoofdstijlblad
+   Stijl: nu.nl compact × De Correspondent editorial
    ===================================================================== */
 
+/* ----- Google Fonts fallback stack ---------------------------------- */
+@import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=Inter:wght@400;500;600;700&display=swap');
+
+/* ----- Design tokens ------------------------------------------------ */
 :root {
-  --primary:      #1a3a5c;
-  --primary-dark: #0f2540;
-  --accent:       #f57c00;
-  --bg:           #f4f6f9;
-  --card-bg:      #ffffff;
-  --card-shadow:  0 2px 8px rgba(0,0,0,.08);
-  --card-shadow-h:0 6px 20px rgba(0,0,0,.14);
-  --radius:       12px;
-  --radius-sm:    6px;
-  --text-muted:   #6b7280;
+  /* Kleuren */
+  --primary:        #1a3a5c;   /* donkerblauw, navbar / knoppen */
+  --primary-dark:   #0f2540;   /* hover / active */
+  --primary-light:  #e8eef5;   /* lichte tint voor hover-states */
+  --accent:         #e8500d;   /* nu.nl-oranje/rood accent */
+  --accent-light:   #fff0ea;   /* lichte accentachtergrond */
+  --accent-dark:    #c43d07;   /* donker accent hover */
+
+  /* Achtergronden */
+  --bg:             #faf8f5;   /* De Correspondent warm off-white */
+  --bg-alt:         #f2efe9;   /* iets donkerdere variant */
+  --card-bg:        #ffffff;
+  --navbar-bg:      #0f2540;   /* bijna-zwart donkerblauw */
+
+  /* Typografie */
+  --font-serif:     'Source Serif 4', Georgia, 'Times New Roman', serif;
+  --font-sans:      'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --text-primary:   #1a1a1e;
+  --text-secondary: #4a4a52;
+  --text-muted:     #78788a;
+  --text-light:     #a0a0b0;
+
+  /* Randen & schaduwen */
+  --border:         #e0ddd7;
+  --border-light:   #ece9e3;
+  --radius:         10px;
+  --radius-sm:      6px;
+  --radius-xs:      4px;
+  --shadow-sm:      0 1px 4px rgba(0,0,0,.07), 0 2px 8px rgba(0,0,0,.05);
+  --shadow-md:      0 4px 16px rgba(0,0,0,.10), 0 1px 4px rgba(0,0,0,.06);
+  --shadow-lg:      0 8px 32px rgba(0,0,0,.13), 0 2px 8px rgba(0,0,0,.07);
+
+  /* Maatvoering */
+  --navbar-h:       56px;
 }
 
-/* ----- Base ----- */
+/* ----- Reset & basis ------------------------------------------------ */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
 body {
   background: var(--bg);
-  font-family: 'Segoe UI', system-ui, sans-serif;
-  color: #1a1a2e;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* ----- Navbar ----- */
+a { color: inherit; }
+button { cursor: pointer; font-family: inherit; }
+
+/* ----- Scrollbar (WebKit) ------------------------------------------ */
+::-webkit-scrollbar          { width: 5px; height: 5px; }
+::-webkit-scrollbar-track    { background: transparent; }
+::-webkit-scrollbar-thumb    { background: var(--border); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* ===================================================================
+   NAVBAR
+   =================================================================== */
 #main-navbar {
-  background: var(--primary) !important;
-  box-shadow: 0 2px 12px rgba(0,0,0,.2);
+  background: var(--navbar-bg);
+  height: var(--navbar-h);
+  border-bottom: 2px solid var(--accent);
+  z-index: 1030;
 }
-#main-navbar .navbar-brand {
-  font-size: 1.15rem;
+
+#main-navbar .container-xl {
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.navbar-brand {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+  padding: 0;
+}
+
+.navbar-logo-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: var(--accent);
+  border-radius: var(--radius-xs);
+  color: #fff;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.navbar-title {
+  font-family: var(--font-serif);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #ffffff;
   letter-spacing: -.01em;
 }
 
-/* ----- Source badges ----- */
+/* Update badge */
+.update-badge {
+  font-size: .75rem;
+  font-weight: 500;
+  color: rgba(255,255,255,.55);
+  gap: .35rem;
+  white-space: nowrap;
+}
+.update-badge i { font-size: .8rem; color: var(--accent); }
+
+/* Vernieuwen knop */
+.btn-refresh {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  padding: 6px 14px;
+  background: transparent;
+  border: 1.5px solid rgba(255,255,255,.25);
+  border-radius: var(--radius-sm);
+  color: rgba(255,255,255,.85);
+  font-size: .8rem;
+  font-weight: 600;
+  transition: background .15s, border-color .15s, color .15s;
+}
+.btn-refresh:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+/* Spin animatie */
+.spin { animation: spin .6s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ===================================================================
+   ZOEK HERO
+   =================================================================== */
+.search-hero {
+  background: var(--bg-alt);
+  border-bottom: 1px solid var(--border);
+  padding: 1.5rem 0 1.25rem;
+}
+
+.search-hero-inner {
+  max-width: 720px;
+}
+
+.search-label {
+  display: block;
+  font-size: .75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--text-muted);
+  margin-bottom: .55rem;
+}
+
+.search-input-group {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: border-color .15s, box-shadow .15s;
+}
+.search-input-group:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(26,58,92,.1);
+}
+
+.search-icon {
+  flex-shrink: 0;
+  padding: 0 .75rem;
+  color: var(--text-muted);
+  font-size: .95rem;
+  pointer-events: none;
+}
+
+.search-field {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: .65rem .25rem .65rem 0;
+  font-family: var(--font-sans);
+  font-size: .95rem;
+  color: var(--text-primary);
+  background: transparent;
+  min-width: 0;
+}
+.search-field::placeholder { color: var(--text-light); }
+
+.btn-search {
+  flex-shrink: 0;
+  padding: .65rem 1.2rem;
+  background: var(--accent);
+  border: none;
+  color: #fff;
+  font-size: .85rem;
+  font-weight: 700;
+  letter-spacing: .01em;
+  transition: background .15s;
+}
+.btn-search:hover { background: var(--accent-dark); }
+
+.results-count-wrap {
+  margin-top: .6rem;
+  min-height: 1.25em;
+}
+.results-count {
+  font-size: .8rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+/* ===================================================================
+   FILTERBALK — CATEGORIEËN
+   =================================================================== */
+.filter-section {
+  padding-top: 1rem;
+}
+
+.category-scroll-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 4px;  /* ruimte voor scrollbar */
+  scrollbar-width: none;
+}
+.category-scroll-wrap::-webkit-scrollbar { display: none; }
+
+#category-bar {
+  flex-wrap: nowrap;          /* horizontaal scrollbaar op mobiel */
+  white-space: nowrap;
+}
+
+/* category-pill base */
+.category-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1.5px solid var(--border);
+  background: #fff;
+  color: var(--text-secondary);
+  font-family: var(--font-sans);
+  font-size: .8rem;
+  font-weight: 600;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: border-color .15s, background .15s, color .15s, transform .1s, box-shadow .15s;
+  cursor: pointer;
+}
+.category-pill:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: var(--primary-light);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+.category-pill.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+  box-shadow: 0 2px 10px rgba(26,58,92,.3);
+}
+.category-pill .count {
+  background: rgba(0,0,0,.12);
+  border-radius: 999px;
+  padding: 0 6px;
+  font-size: .7rem;
+  font-weight: 700;
+  min-width: 20px;
+  text-align: center;
+}
+.category-pill.active .count {
+  background: rgba(255,255,255,.28);
+}
+
+/* ===================================================================
+   FILTERBALK — BRONNEN
+   =================================================================== */
+.source-scroll-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.source-scroll-wrap::-webkit-scrollbar { display: none; }
+
+#source-bar {
+  flex-wrap: nowrap;
+  white-space: nowrap;
+}
+
+.source-filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  padding: 5px 13px;
+  border-radius: 999px;
+  border: 1.5px solid var(--src-color, #888);
+  background: #fff;
+  color: var(--src-color, #555);
+  font-family: var(--font-sans);
+  font-size: .78rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background .15s, color .15s, box-shadow .15s;
+  cursor: pointer;
+}
+.source-filter-btn .badge {
+  background: color-mix(in srgb, var(--src-color, #555) 15%, transparent);
+  color: var(--src-color, #555);
+  font-weight: 700;
+  font-size: .68rem;
+  padding: 1px 6px;
+  border-radius: 999px;
+}
+.source-filter-btn:hover,
+.source-filter-btn.active {
+  background: var(--src-color, #555);
+  color: #fff;
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--src-color, #555) 35%, transparent);
+}
+.source-filter-btn.active .badge {
+  background: rgba(255,255,255,.28);
+  color: #fff;
+}
+
+/* ===================================================================
+   NIEUWSKAARTEN
+   =================================================================== */
+.news-card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-light);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: 100%;
+  transition: box-shadow .2s, transform .2s, border-color .2s;
+  position: relative;
+}
+.news-card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-4px);
+  border-color: var(--border);
+}
+
+/* Afbeelding */
+.news-card-img {
+  height: 168px;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--bg-alt) 0%, var(--border-light) 100%);
+  flex-shrink: 0;
+  position: relative;
+}
+.news-card-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform .35s ease;
+  display: block;
+}
+.news-card:hover .news-card-img img {
+  transform: scale(1.05);
+}
+
+/* Categorie tag over afbeelding */
+.news-card-img .category-tag {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 2;
+}
+
+/* Body */
+.news-card-body {
+  padding: .9rem 1rem .6rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: .4rem;
+}
+
+/* Meta-regel boven de titel */
+.news-card-meta {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  flex-wrap: wrap;
+}
+
+/* Titel — serif + bold, nu.nl-stijl */
+.news-title {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--text-primary);
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.news-title a {
+  color: inherit;
+  text-decoration: none;
+}
+.news-title a:hover {
+  color: var(--accent) !important;
+}
+
+/* Samenvatting */
+.news-summary {
+  font-size: .84rem;
+  line-height: 1.55;
+  color: var(--text-secondary);
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  flex: 1;
+}
+
+/* Footer van de kaart */
+.news-card-footer {
+  padding: .6rem 1rem .7rem;
+  border-top: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .5rem;
+}
+
+/* Lees meer knop */
+.btn-read-more {
+  font-family: var(--font-sans);
+  font-size: .78rem;
+  font-weight: 700;
+  color: var(--primary);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  letter-spacing: .01em;
+  transition: color .15s, gap .15s;
+  white-space: nowrap;
+}
+.btn-read-more:hover {
+  color: var(--accent);
+  gap: 8px;
+}
+
+/* Bron badge op kaart */
+.source-badge-sm {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--src-color, #555) 10%, transparent);
+  color: var(--src-color, #555);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: .68rem;
+  letter-spacing: .01em;
+  white-space: nowrap;
+  border: 1px solid color-mix(in srgb, var(--src-color, #555) 20%, transparent);
+}
+
+/* ===================================================================
+   CATEGORIE-KLEUREN (tags op kaarten)
+   =================================================================== */
+.category-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: var(--radius-xs);
+  font-family: var(--font-sans);
+  font-size: .67rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  white-space: nowrap;
+}
+
+.cat-digitaal        { background: #dbeafe; color: #1d4ed8; }
+.cat-beleid          { background: #ede9fe; color: #6d28d9; }
+.cat-lezen--educatie,
+.cat-lezen-educatie  { background: #d1fae5; color: #065f46; }
+.cat-statistieken    { background: #ccfbf1; color: #0f766e; }
+.cat-innovatie       { background: #fef3c7; color: #92400e; }
+.cat-collectie       { background: #ffedd5; color: #9a3412; }
+.cat-organisatie     { background: #f3f4f6; color: #374151; }
+.cat-evenementen     { background: #fce7f3; color: #9d174d; }
+.cat-overig          { background: #f1f5f9; color: #475569; }
+
+/* ===================================================================
+   SKELETON LOADING CARDS
+   =================================================================== */
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: .45; }
+}
+
+.skeleton-card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  animation: skeleton-pulse 1.6s ease-in-out infinite;
+}
+
+.skeleton-img {
+  height: 168px;
+  background: linear-gradient(90deg, var(--bg-alt) 0%, var(--border) 50%, var(--bg-alt) 100%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.8s linear infinite, skeleton-pulse 1.6s ease-in-out infinite;
+}
+@keyframes skeleton-shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+.skeleton-body {
+  padding: .9rem 1rem .7rem;
+  display: flex;
+  flex-direction: column;
+  gap: .55rem;
+}
+
+.skeleton-line {
+  height: 12px;
+  background: var(--bg-alt);
+  border-radius: 4px;
+}
+.skeleton-line--xs     { width: 30%; height: 10px; }
+.skeleton-line--short  { width: 45%; height: 14px; }
+.skeleton-line--medium { width: 72%; }
+.skeleton-line--full   { width: 100%; }
+
+.skeleton-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: .3rem;
+  padding-top: .55rem;
+  border-top: 1px solid var(--border-light);
+}
+
+.loading-label {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: .85rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  letter-spacing: .02em;
+}
+
+/* ===================================================================
+   ERROR STATE
+   =================================================================== */
+.error-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.25rem;
+  padding: 1.5rem 1.75rem;
+  background: #fff8f6;
+  border: 1.5px solid #ffd5c8;
+  border-left: 4px solid var(--accent);
+  border-radius: var(--radius);
+  max-width: 600px;
+  margin: 2rem auto;
+}
+
+.error-icon {
+  font-size: 1.75rem;
+  color: var(--accent);
+  flex-shrink: 0;
+  line-height: 1;
+  margin-top: .1rem;
+}
+
+.error-title {
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 .35rem;
+}
+
+.error-detail {
+  font-size: .84rem;
+  color: var(--text-secondary);
+  margin: 0 0 .85rem;
+}
+
+.btn-retry {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 18px;
+  background: var(--accent);
+  border: none;
+  border-radius: var(--radius-sm);
+  color: #fff;
+  font-size: .82rem;
+  font-weight: 700;
+  transition: background .15s, transform .1s;
+}
+.btn-retry:hover {
+  background: var(--accent-dark);
+  transform: translateY(-1px);
+}
+
+/* ===================================================================
+   EMPTY STATE
+   =================================================================== */
+.empty-state {
+  text-align: center;
+  padding: 4rem 1rem 3rem;
+}
+
+.empty-state-icon {
+  font-size: 3.5rem;
+  color: var(--border);
+  display: block;
+  margin-bottom: 1rem;
+  line-height: 1;
+}
+
+.empty-state-title {
+  font-family: var(--font-serif);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin-bottom: .5rem;
+}
+
+.empty-state-text {
+  font-size: .9rem;
+  color: var(--text-muted);
+  margin-bottom: 1.25rem;
+}
+
+.btn-clear-filter {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 20px;
+  background: var(--primary);
+  border: none;
+  border-radius: var(--radius-sm);
+  color: #fff;
+  font-size: .82rem;
+  font-weight: 700;
+  transition: background .15s, transform .1s;
+}
+.btn-clear-filter:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+/* ===================================================================
+   SOURCE BADGE (footer links van de kaart)
+   — ook gebruikt in de footer van de pagina
+   =================================================================== */
 .source-badge {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 4px 10px;
-  border-radius: 20px;
-  border: 2px solid var(--src-color, #555);
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1.5px solid var(--src-color, #555);
   color: var(--src-color, #555);
+  font-family: var(--font-sans);
   font-weight: 600;
-  font-size: .8rem;
+  font-size: .78rem;
+  text-decoration: none;
   transition: background .15s, color .15s;
 }
 .source-badge:hover {
@@ -50,227 +701,124 @@ body {
   color: #fff;
 }
 
-.source-badge-sm {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 2px 8px;
-  border-radius: 20px;
-  background: color-mix(in srgb, var(--src-color, #555) 12%, transparent);
-  color: var(--src-color, #555);
-  font-weight: 600;
-  font-size: .72rem;
-  white-space: nowrap;
+/* ===================================================================
+   FOOTER
+   =================================================================== */
+.site-footer {
+  background: var(--navbar-bg);
+  border-top: 2px solid var(--accent);
+  padding: 1.75rem 0;
+  margin-top: 3rem;
+  color: rgba(255,255,255,.6);
 }
 
-/* ----- Source filter buttons ----- */
-.source-filter-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 5px 14px;
-  border-radius: 20px;
-  border: 1.5px solid var(--src-color, #555);
-  color: var(--src-color, #555);
-  background: #fff;
-  font-size: .82rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background .15s, color .15s;
-}
-.source-filter-btn .badge {
-  background: color-mix(in srgb, var(--src-color, #555) 15%, transparent);
-  color: var(--src-color, #555);
-  font-weight: 700;
-}
-.source-filter-btn:hover,
-.source-filter-btn.active {
-  background: var(--src-color, #555);
-  color: #fff;
-}
-.source-filter-btn.active .badge {
-  background: rgba(255,255,255,.25);
-  color: #fff;
-}
-
-/* ----- Category pills (filter bar) ----- */
-.category-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 14px;
-  border-radius: 20px;
-  border: 1.5px solid #d1d5db;
-  color: #374151;
-  text-decoration: none;
-  font-size: .85rem;
-  font-weight: 500;
-  background: #fff;
-  transition: border-color .15s, background .15s, color .15s, transform .1s;
-}
-.category-pill:hover {
-  border-color: var(--primary);
-  color: var(--primary);
-  transform: translateY(-1px);
-}
-.category-pill.active {
-  background: var(--primary);
-  border-color: var(--primary);
-  color: #fff;
-  box-shadow: 0 2px 8px rgba(26,58,92,.3);
-}
-.category-pill .count {
-  background: rgba(0,0,0,.1);
-  border-radius: 10px;
-  padding: 0 6px;
-  font-size: .75rem;
-}
-.category-pill.active .count {
-  background: rgba(255,255,255,.25);
-}
-
-/* ----- Category tags on cards ----- */
-.category-tag {
-  display: inline-flex;
-  align-items: center;
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-size: .7rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: .03em;
-}
-
-/* Category colours */
-.cat-digitaal                { background:#dbeafe; color:#1d4ed8; }
-.cat-beleid                  { background:#ede9fe; color:#6d28d9; }
-.cat-lezen--educatie,
-.cat-lezen-educatie          { background:#d1fae5; color:#065f46; }
-.cat-statistieken            { background:#ccfbf1; color:#0f766e; }
-.cat-innovatie               { background:#fef9c3; color:#854d0e; }
-.cat-collectie               { background:#ffedd5; color:#9a3412; }
-.cat-organisatie             { background:#f3f4f6; color:#374151; }
-.cat-evenementen             { background:#fce7f3; color:#9d174d; }
-.cat-overig                  { background:#f1f5f9; color:#475569; }
-
-/* ----- News cards ----- */
-.news-card {
-  background: var(--card-bg);
-  border-radius: var(--radius);
-  box-shadow: var(--card-shadow);
+.footer-inner {
   display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  transition: box-shadow .2s, transform .2s;
-  position: relative;
-}
-.news-card:hover {
-  box-shadow: var(--card-shadow-h);
-  transform: translateY(-3px);
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 2rem;
 }
 
-.news-card-img {
-  height: 180px;
-  overflow: hidden;
-  background: #e5e7eb;
+.footer-brand {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  color: rgba(255,255,255,.9);
+  font-size: .95rem;
+  flex-shrink: 0;
 }
-.news-card-img img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform .3s;
-}
-.news-card:hover .news-card-img img {
-  transform: scale(1.04);
-}
+.footer-brand i { color: var(--accent); }
 
-.news-card-body {
-  padding: 1rem 1.1rem .75rem;
+.footer-sources {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
   flex: 1;
 }
 
-.news-title {
-  font-size: 1rem;
-  font-weight: 650;
-  line-height: 1.35;
-  margin-bottom: .4rem;
-  /* 3-line clamp */
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+/* Bronlinks in de footer witte kleur */
+#footer-sources .source-badge {
+  border-color: rgba(255,255,255,.2);
+  color: rgba(255,255,255,.65);
 }
-.news-title a:hover {
-  color: var(--primary) !important;
+#footer-sources .source-badge:hover {
+  background: rgba(255,255,255,.12);
+  color: rgba(255,255,255,.95);
+  border-color: rgba(255,255,255,.4);
 }
 
-.news-summary {
+.footer-meta {
+  font-size: .75rem;
+  color: rgba(255,255,255,.4);
+  white-space: nowrap;
+  margin-left: auto;
+}
+
+/* ===================================================================
+   TOAST NOTIFICATIES
+   =================================================================== */
+.toast {
+  font-family: var(--font-sans);
   font-size: .85rem;
-  line-height: 1.5;
-  /* 3-line clamp */
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  margin-bottom: 0;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-lg);
 }
 
-.news-card-footer {
-  padding: .75rem 1.1rem;
-  border-top: 1px solid #f1f5f9;
-}
-.btn-read-more {
-  font-size: .82rem;
-  font-weight: 600;
-  color: var(--primary);
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  transition: gap .15s;
-}
-.btn-read-more:hover {
-  gap: 8px;
-  color: var(--accent);
-}
-
-/* ----- Empty state ----- */
-.empty-state-icon {
-  font-size: 4rem;
-  color: #d1d5db;
-}
-
-/* ----- Pagination ----- */
+/* ===================================================================
+   PAGINATIE (Bootstrap override)
+   =================================================================== */
 .pagination .page-link {
   border-radius: var(--radius-sm) !important;
   color: var(--primary);
-  border: 1.5px solid #e5e7eb;
+  border: 1.5px solid var(--border);
+  font-size: .85rem;
+  font-weight: 600;
 }
 .pagination .page-item.active .page-link {
   background: var(--primary);
   border-color: var(--primary);
+  color: #fff;
 }
 .pagination .page-link:hover {
-  background: #e8f0fe;
+  background: var(--primary-light);
   border-color: var(--primary);
+  color: var(--primary);
 }
 
-/* ----- Search input ----- */
-.input-group .form-control:focus {
-  box-shadow: none;
-  border-color: var(--primary);
-}
-.input-group .input-group-text {
-  border-color: #dee2e6;
+/* ===================================================================
+   RESPONSIVE — mobile-first
+   =================================================================== */
+
+/* Mobiel (< 576px) — 1 kolom, compacte spacing */
+@media (max-width: 575.98px) {
+  .search-hero { padding: 1rem 0; }
+  .search-field { font-size: .9rem; }
+  .btn-search { padding: .65rem .9rem; font-size: .82rem; }
+
+  #category-bar { gap: .4rem !important; }
+  .category-pill { padding: 5px 11px; font-size: .75rem; }
+
+  .news-card-img { height: 150px; }
+  .news-title { font-size: .98rem; }
+
+  .footer-inner { flex-direction: column; gap: .75rem; }
+  .footer-meta { margin-left: 0; }
 }
 
-/* ----- Refresh spinner ----- */
-.spin {
-  animation: spin .6s linear infinite;
+/* Tablet (576–991px) — 2 kolommen */
+@media (min-width: 576px) and (max-width: 991.98px) {
+  .news-card-img { height: 160px; }
 }
-@keyframes spin { to { transform: rotate(360deg); } }
 
-/* ----- Scrollbar (WebKit) ----- */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #c4c9d4; border-radius: 3px; }
+/* Desktop (≥ 992px) — 3 kolommen via Bootstrap col-lg-4 */
+@media (min-width: 992px) {
+  .search-hero { padding: 2rem 0 1.5rem; }
+  #category-bar { flex-wrap: wrap !important; }
+  #source-bar   { flex-wrap: wrap !important; }
+}
+
+/* ===================================================================
+   HULPKLASSEN
+   =================================================================== */
+/* Verberg Bootstrap spinner-gerelateerde klassen als ze nog in de DOM
+   staan vanuit app.js */
+.spinner-border { display: none !important; }
